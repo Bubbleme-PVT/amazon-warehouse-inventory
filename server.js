@@ -3,7 +3,7 @@ const path = require('path');
 const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -22,6 +22,22 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Warehouse dashboard running at http://localhost:${PORT}`);
+// Attempt to start on the desired port, fallback to random free port if busy
+const server = app.listen(PORT, () => {
+  console.log(`Warehouse dashboard running at http://localhost:${server.address().port}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.warn(`Port ${PORT} in use, selecting a free port...`);
+    // Let OS pick an available port
+    const tempServer = app.listen(0, () => {
+      console.log(`Warehouse dashboard running at http://localhost:${tempServer.address().port}`);
+    });
+    tempServer.on('error', (e) => {
+      console.error('Failed to start server on any port:', e);
+    });
+  } else {
+    console.error('Server error:', err);
+  }
 });
