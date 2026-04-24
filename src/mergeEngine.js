@@ -94,7 +94,19 @@ function classifyHeaders(headers) {
 }
 
 async function readWorkbook(file) {
+  const fileName = String(file?.name || '').toLowerCase();
   const buffer = await file.arrayBuffer();
+
+  if (fileName.endsWith('.tsv')) {
+    const text = new TextDecoder('utf-8').decode(buffer);
+    return XLSX.read(text, {
+      type: 'string',
+      FS: '\t',
+      cellDates: true,
+      raw: false
+    });
+  }
+
   return XLSX.read(buffer, { type: 'array', cellDates: true, raw: false });
 }
 

@@ -7,7 +7,7 @@ React + Node.js warehouse planner for Bubble Me Amazon inventory.
 - **React-based UI**: `src/App.jsx` renders the full old planner UI/UX style.
 - **Node.js-based local hosting**: `server.js` serves the production build with Express.
 - **Cloudflare Pages deployable**: Cloudflare builds the React app with Vite and serves `dist`.
-- **Master XLSX + CSV update flow**: upload old master XLSX with latest CSV update files together.
+- **Master XLSX + CSV update flow**: upload old master XLSX with latest CSV/TSV update files together.
 - **Theme options**: System, Light, Dark. Default is System.
 
 ## Local development
@@ -61,10 +61,14 @@ wrangler.toml
 ## Workflow
 
 ```text
-Upload old master XLSX + latest CSV update files
-→ CSV files update matching XLSX-style rows
+Upload old master XLSX + latest CSV/TSV update files
+→ CSV/TSV files update matching XLSX-style rows
 → old unmatched rows stay
 → new rows are appended
 → dashboard builds from the updated data
 → download updated XLSX
 ```
+
+## TSV support
+
+The uploader now accepts `.tsv` files and parses them as tab-separated update files for the same master XLSX update workflow.
