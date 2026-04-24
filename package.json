@@ -1,20 +1,25 @@
 {
-  "name": "warehouse-old-ui-cloudflare",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
+  "name": "adsignal",
+  "version": "2.0.0",
+  "description": "AdSignal — Full Ad Decision Engine (Node.js + SQLite)",
+  "main": "server.js",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "typescript": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "xlsx": "latest"
-  },
-  "devDependencies": {}
+    "axios": "^1.15.2",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "google-ads-api": "^23.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "node-cron": "^4.2.1",
+    "sql.js": "^1.14.1",
+    "ws": "^8.20.0"
+  }
 }
