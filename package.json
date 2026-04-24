@@ -1,14 +1,12 @@
 {
-  "name": "warehouse-cloudflare-react-node",
-  "version": "2.0.0",
+  "name": "warehouse-old-ui-cloudflare",
+  "version": "1.0.0",
   "private": true,
-  "description": "React + Node/Vite warehouse dashboard with Amazon CSV smart merge, deployable on Cloudflare Pages.",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0",
-    "deploy": "npm run build && wrangler pages deploy dist"
+    "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
@@ -16,12 +14,7 @@
     "typescript": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "xlsx": "^0.18.5"
+    "xlsx": "latest"
   },
-  "devDependencies": {
-    "wrangler": "latest"
-  },
-  "engines": {
-    "node": ">=20"
-  }
+  "devDependencies": {}
 }

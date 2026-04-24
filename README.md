@@ -1,11 +1,16 @@
-# Warehouse Planner Dashboard — React + Node/Vite + Cloudflare
+# Warehouse Dashboard — Old UI + Fixed CSV Merge
 
-This is a deployable React dashboard that fixes the multi-CSV merge problem by converting uploaded files into one consistent dashboard upload format.
+This version keeps the original UI/UX, classes, colors, layout, sidebar, cards, charts, filters, and table flow. Only the file reading and merge/build logic has been changed so multiple Amazon CSV files can be converted into the dashboard upload schema and shown in the dashboard.
 
-## What it does
+## What is fixed
 
-- Upload multiple `.csv`, `.xlsx`, or `.xls` files together.
-- Detects already-converted dashboard files with this schema:
+- Multiple CSV/XLSX upload works in the browser.
+- Amazon file types are detected automatically:
+  - Shipment queue CSV
+  - FBA inventory CSV
+  - Inventory ledger/event CSV
+  - Already-converted dashboard XLSX/CSV
+- The merged data is converted into the same dashboard format:
   - `Month`
   - `Warehouse`
   - `Product`
@@ -14,25 +19,8 @@ This is a deployable React dashboard that fixes the multi-CSV merge problem by c
   - `Closing_Stock`
   - `In_Transit`
   - `Lead_Time_Days`
-- Detects Amazon FBA CSV exports:
-  - FBA inventory report, for SKU, available stock, shipped units, inbound units.
-  - Inventory ledger report, for warehouse-level shipments, receipts, returns and quantities.
-  - Shipment queue report, for inbound/receiving shipment status and destination FC.
-- Converts the data into the exact dashboard upload schema.
-- Shows KPI cards, sales trend, warehouse stock, dispatch summary, filters and merged data preview.
-- Lets you download the merged output as `.xlsx` or `.csv`.
-
-## Why the old merge broke
-
-The uploaded CSV files are not the same table. One file is a shipment queue, one is an FBA inventory report, and one is an inventory ledger. A normal merge/appending method creates a broken table because the columns are different.
-
-This version uses a smart merge engine:
-
-1. Reads every uploaded file.
-2. Detects the file type from headers.
-3. Maps SKU/MSKU/product names into clean product names.
-4. Converts everything into the dashboard schema.
-5. Builds the dashboard from the merged output.
+- Dashboard charts, filters, KPIs, dispatch alerts and summary table use the converted merged data.
+- No backend upload API is needed, so it can deploy on Cloudflare Pages.
 
 ## Local setup
 
@@ -41,28 +29,11 @@ npm install
 npm run dev
 ```
 
-Open the local URL shown in the terminal.
-
-## Build
-
-```bash
-npm run build
-```
-
-The production files will be generated in:
-
-```text
-dist/
-```
+Open the local Vite URL shown in your terminal.
 
 ## Cloudflare Pages deployment
 
-### Option 1: Deploy from Cloudflare dashboard
-
-1. Push this folder to GitHub.
-2. Open Cloudflare Pages.
-3. Connect the GitHub repository.
-4. Use these build settings:
+Use these settings:
 
 ```text
 Framework preset: Vite
@@ -71,34 +42,17 @@ Build output directory: dist
 Node version: 20
 ```
 
-5. Deploy.
-
-### Option 2: Deploy with Wrangler
+## GitHub upload
 
 ```bash
-npm install
-npm run deploy
+git init
+git add .
+git commit -m "warehouse dashboard old UI cloudflare merge fix"
+git branch -M main
+git remote add origin YOUR_GITHUB_REPO_URL
+git push -u origin main
 ```
 
-## GitHub file structure
+## Notes
 
-```text
-warehouse-cloudflare-react-node/
-  public/
-    _headers
-  src/
-    main.jsx
-    mergeEngine.js
-    dashboardEngine.js
-    styles.css
-  .gitignore
-  .nvmrc
-  index.html
-  package.json
-  README.md
-  wrangler.toml
-```
-
-## Important note about Amazon shipment CSV
-
-Amazon shipment queue CSV does not include product-level SKU split. Because of that, product-level inbound quantities are taken from the FBA inventory report when available. The shipment queue is still used to detect FC destinations and active inbound status.
+The UI has intentionally not been redesigned. The old `index.html` structure and `styles.css` visual system are retained. The only app behavior change is that upload, merge, and dashboard build now run locally in the browser instead of depending on Express endpoints.
