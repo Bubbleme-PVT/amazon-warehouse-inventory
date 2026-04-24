@@ -1,38 +1,70 @@
-# Warehouse Planner – Old UI / Full UI Refresh
+# Amazon Warehouse Inventory Planner
 
-This package keeps the uploaded **Warehouse Planner old.html** UI/UX style and upgrades the app for the required workflow:
+React + Node.js warehouse planner for Bubble Me Amazon inventory.
 
-- Upload **one master XLSX** plus **multiple CSV update files** together
-- CSV data updates the XLSX-style planner rows
-- Uses the updated merged dataset to build the dashboard / planner
-- Same planner-style UI layout
-- Theme options: **System (default)**, **Light**, **Dark**
-- Cloudflare Pages deployable (static Vite app)
+## What this version is
 
-## Run locally
+- **React-based UI**: `src/App.jsx` renders the full old planner UI/UX style.
+- **Node.js-based local hosting**: `server.js` serves the production build with Express.
+- **Cloudflare Pages deployable**: Cloudflare builds the React app with Vite and serves `dist`.
+- **Master XLSX + CSV update flow**: upload old master XLSX with latest CSV update files together.
+- **Theme options**: System, Light, Dark. Default is System.
+
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Build
+Open the Vite URL shown in the terminal.
+
+## Local production Node server
+
+```bash
+npm run serve
+```
+
+This builds the React app and starts the Node/Express server.
+
+Or separately:
 
 ```bash
 npm run build
+npm start
 ```
 
-## Deploy to Cloudflare Pages
+## Cloudflare Pages settings
 
-- Framework preset: **Vite**
-- Build command: `npm run build`
-- Output directory: `dist`
+```text
+Framework preset: Vite
+Build command: npm run build
+Build output directory: dist
+Node version: 20
+```
 
-## Files
+## Important files
 
-- `index.html` – app shell using the old planner UI layout
-- `public/styles.css` – planner styling + theme support
-- `src/app.js` – planner logic + theme switcher + upload flow
-- `src/mergeEngine.js` – master XLSX + CSV merge/update logic
-- `src/calculations.js` – extra helper logic retained from previous package
-- `wrangler.toml` – Cloudflare config reference
+```text
+index.html
+server.js
+src/App.jsx
+src/main.jsx
+src/app.js
+src/mergeEngine.js
+src/calculations.js
+public/styles.css
+package.json
+wrangler.toml
+```
+
+## Workflow
+
+```text
+Upload old master XLSX + latest CSV update files
+→ CSV files update matching XLSX-style rows
+→ old unmatched rows stay
+→ new rows are appended
+→ dashboard builds from the updated data
+→ download updated XLSX
+```
