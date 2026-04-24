@@ -1,74 +1,104 @@
-# Warehouse Dashboard Express App
+# Warehouse Planner Dashboard — React + Node/Vite + Cloudflare
 
-Node.js + Express version of the warehouse dashboard.
+This is a deployable React dashboard that fixes the multi-CSV merge problem by converting uploaded files into one consistent dashboard upload format.
 
-## Features
+## What it does
 
-- Same frontend dashboard look and flow
-- Backend parsing with `xlsx`
-- Upload `.xlsx`, `.xls`, or `.csv`
-- Upload multiple CSV files together and auto-merge them into a combined sheet
-- Backend summary, KPI, alerts, chart data, and CSV export
-- Frontend uses `fetch()` to call the backend
+- Upload multiple `.csv`, `.xlsx`, or `.xls` files together.
+- Detects already-converted dashboard files with this schema:
+  - `Month`
+  - `Warehouse`
+  - `Product`
+  - `Sent_Qty`
+  - `Sold_Qty`
+  - `Closing_Stock`
+  - `In_Transit`
+  - `Lead_Time_Days`
+- Detects Amazon FBA CSV exports:
+  - FBA inventory report, for SKU, available stock, shipped units, inbound units.
+  - Inventory ledger report, for warehouse-level shipments, receipts, returns and quantities.
+  - Shipment queue report, for inbound/receiving shipment status and destination FC.
+- Converts the data into the exact dashboard upload schema.
+- Shows KPI cards, sales trend, warehouse stock, dispatch summary, filters and merged data preview.
+- Lets you download the merged output as `.xlsx` or `.csv`.
 
-## Project structure
+## Why the old merge broke
 
-```text
-/project-root
-  /public
-    index.html
-    styles.css
-    app.js
-  /routes
-    dashboard.js
-  /controllers
-    dashboardController.js
-  /utils
-    calculations.js
-  server.js
-```
+The uploaded CSV files are not the same table. One file is a shipment queue, one is an FBA inventory report, and one is an inventory ledger. A normal merge/appending method creates a broken table because the columns are different.
 
-## Install
+This version uses a smart merge engine:
+
+1. Reads every uploaded file.
+2. Detects the file type from headers.
+3. Maps SKU/MSKU/product names into clean product names.
+4. Converts everything into the dashboard schema.
+5. Builds the dashboard from the merged output.
+
+## Local setup
 
 ```bash
 npm install
+npm run dev
 ```
 
-## Run
+Open the local URL shown in the terminal.
+
+## Build
 
 ```bash
-npm start
+npm run build
 ```
 
-Open:
+The production files will be generated in:
 
 ```text
-http://localhost:3000
+dist/
 ```
 
-## Upload behavior
+## Cloudflare Pages deployment
 
-- Single file upload works normally
-- If you select multiple files, the backend creates a virtual sheet named:
-  - `Merged Data (All uploaded files)`
-- The UI automatically selects that merged sheet first
-- Individual file sheets are also still available in the sheet dropdown
+### Option 1: Deploy from Cloudflare dashboard
 
-## API endpoints
+1. Push this folder to GitHub.
+2. Open Cloudflare Pages.
+3. Connect the GitHub repository.
+4. Use these build settings:
 
-### `POST /upload`
-Upload one or more files using form-data.
+```text
+Framework preset: Vite
+Build command: npm run build
+Build output directory: dist
+Node version: 20
+```
 
-Field name:
-- `files`
+5. Deploy.
 
-### `POST /build`
-Send:
-- `uploadId` or `rawRows`
-- `sheetName`
-- `mappings`
-- `settings`
-- `filters`
+### Option 2: Deploy with Wrangler
 
-### `GET /export?exportId=...`
-Downloads the filtered summary as CSV.
+```bash
+npm install
+npm run deploy
+```
+
+## GitHub file structure
+
+```text
+warehouse-cloudflare-react-node/
+  public/
+    _headers
+  src/
+    main.jsx
+    mergeEngine.js
+    dashboardEngine.js
+    styles.css
+  .gitignore
+  .nvmrc
+  index.html
+  package.json
+  README.md
+  wrangler.toml
+```
+
+## Important note about Amazon shipment CSV
+
+Amazon shipment queue CSV does not include product-level SKU split. Because of that, product-level inbound quantities are taken from the FBA inventory report when available. The shipment queue is still used to detect FC destinations and active inbound status.
